@@ -183,18 +183,21 @@ excursionIslaVecina Fuerte = apreciar "lago"
 excursionIslaVecina _ = irALaPlaya
 
 -- Punto 3b)
-hayAlgunoConvincentePara :: Turista -> Tour -> Bool
-hayAlgunoConvincentePara turista tour = any (esConvincente turista) tour
+hayAlgunoConvincentePara :: Turista -> [Tour] -> Bool
+hayAlgunoConvincentePara turista = any (esConvincente turista)
 
-esConvincente :: Turista -> Excursion -> Bool
-esConvincente turista excursion = esDesestresantePara turista excursion && quedaAcompaniado (hacerExcursion excursion turista)
+esConvincente :: Turista -> Tour -> Bool
+esConvincente turista tour = any (esConvincenteExcursion turista) tour
+
+esConvincenteExcursion :: Turista -> Excursion -> Bool
+esConvincenteExcursion turista excursion = esDesestresantePara turista excursion && quedaAcompaniado (hacerExcursion excursion turista)
 
 quedaAcompaniado :: Turista -> Bool
 quedaAcompaniado = not . viajaSolo
 
 -- Punto 3c)
 efectividad :: Tour -> [Turista] -> Number
-efectividad tour = sum . map (espiritualidad tour) . filter (flip hayAlgunoConvincentePara tour) 
+efectividad tour = sum . map (espiritualidad tour) . filter (flip esConvincente tour) 
 
 espiritualidad :: Tour -> Turista -> Number
 espiritualidad tour turista = (-1) * deltaExcursionSegun stress turista (hacerUnTour tour) + (-1) * deltaExcursionSegun nivelCansancio turista (hacerUnTour tour)
@@ -205,5 +208,9 @@ tourInfinito :: Tour
 tourInfinito = repeat irALaPlaya
 
 -- b  
+-- Tanto con Beto como con Ana, no va a poder saber si el tour infinito es convincente,
+-- porque para pagarlo necesita saber cuántas excursiones hay, y no puede calcularlo
+-- por más que Haskell tenga lazy evaluation, en este caso es inescable.
 
-
+-- c
+-- 
