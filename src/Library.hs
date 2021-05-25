@@ -19,7 +19,7 @@ data Turista = UnTurista {
 , stress :: Number
 , viajaSolo :: Bool
 , idiomas :: [Idioma]
-}
+} deriving Show
 
 
 type Idioma = String
@@ -46,6 +46,14 @@ cathi = UnTurista {
 ,   stress = 15
 ,   viajaSolo = True
 ,   idiomas = ["aleman"]
+}
+
+alf :: Turista
+alf = UnTurista {
+    nivelCansancio = 100
+,   stress = 200
+,   viajaSolo = True
+,   idiomas = ["español"]
 }
 
 -- Punto 2
@@ -107,7 +115,7 @@ aumentarCansancio :: Number -> Turista -> Turista
 aumentarCansancio cant turista = turista { nivelCansancio = nivelCansancio turista + cant }
 -- Fail Fast
 -- Si haces el tipo el IDE te avisa
-data Marea = Fuerte | Moderada | Tranquila
+data Marea = Fuerte | Moderada | Tranquila deriving Show
 
 paseoEnBarco :: Marea -> Excursion
 paseoEnBarco Fuerte = aumentarCansancio 10 . desestresarse (-6)
@@ -131,7 +139,7 @@ La respuesta significa "bajó 3"
 -} 
 
 deltaExcursionSegun :: (Turista -> Number) -> Turista -> Excursion -> Number
-deltaExcursionSegun indice turista excursion = deltaSegun indice turista (hacerExcursion excursion turista)
+deltaExcursionSegun indice turista excursion = deltaSegun indice (hacerExcursion excursion turista) turista 
 
 
 -- c
@@ -208,9 +216,17 @@ tourInfinito :: Tour
 tourInfinito = repeat irALaPlaya
 
 -- b  
--- Tanto con Beto como con Ana, no va a poder saber si el tour infinito es convincente,
--- porque para pagarlo necesita saber cuántas excursiones hay, y no puede calcularlo
--- por más que Haskell tenga lazy evaluation, en este caso es inescable.
+-- Para saber si es convincente un tour, hay que saber si alguna excursión es convincente.
+-- Entonces, hay que ver si irALaPlaya es convincente para Ana (que es una de las infinitas excursiones del tour).
+-- Con el mismo ejemplo de deltaExcursionSegun del enunciado sabemos que irALaPlaya es desestresante, y además Ana está acompañada, así que existe una excursión convincente en el tour. 
+-- Haskell no necesita evaluar la siguiente excursión de la lista infinita por Lazy Evaluation, ya devuelve True.
+
+-- Por el contrario, para Beto irALaPlaya no es convincente, porque nunca pasa a estar acompañado. 
+-- Pero Haskell no lo sabe esto, sigue construyendo y evaluando la lista infinita de excursiones y
+-- jamás va a encontrar una excursión convincente. Se cuelga infinitamente por más que exista la Lazy Evaluation.
 
 -- c
--- 
+-- Mirando el código de efectividad:
+-- Para conocer la efectividad del tour es necesario que el mismo se haga.
+-- Esto no es posible porque hay que pagarlo y para eso necesito conocer la cantidad de excursiones que tiene el mismo
+-- (y si la cantidad es infinita...).
