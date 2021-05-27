@@ -226,7 +226,7 @@ efectividad :: Tour -> [Turista] -> Number
 efectividad tour = sum . map (espiritualidad tour) . filter (flip esConvincente tour) 
 
 espiritualidad :: Tour -> Turista -> Number
-espiritualidad tour turista = (-1) * deltaExcursionSegun nivelDeCansancio turista (hacerTour tour) + (-1) * deltaExcursionSegun nivelDeCansancio turista (hacerTour tour)
+espiritualidad tour turista = (-1) * deltaExcursionSegun nivelDeStress turista (hacerTour tour) + (-1) * deltaExcursionSegun nivelDeCansancio turista (hacerTour tour)
 
 -- Punto 4
 -- a
